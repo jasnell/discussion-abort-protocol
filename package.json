@@ -1,0 +1,13 @@
+{
+  "name": "discussion-abort-protocol",
+  "private": true,
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^51",
+    "@slidev/theme-default": "latest"
+  }
+}

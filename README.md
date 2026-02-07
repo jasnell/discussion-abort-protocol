@@ -33,7 +33,7 @@ The core requirement is a way for a **consumer** of work to be told "stop what y
 doing." This is a one-way communication: from a controller (the party that decides to
 cancel) to a consumer (the party doing cancellable work).
 
-The consumer needs a way to register a callback that will be invoked when abort occurs.
+The consumer needs a way to register interest in being notified when abort occurs.
 
 ### Principle 2: Synchronous and Immediate Notification
 
