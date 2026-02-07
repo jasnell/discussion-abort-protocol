@@ -504,6 +504,10 @@ The following examples illustrate how each protocol option would look in practic
 across the key use cases: basic consumption, the `AbortSignal` compatibility bridge,
 the never-aborts sentinel, and signal composition.
 
+Note: These are **NOT** intended to be concrete proposals. These are meant not to
+propose a solution but to give a starting point to discuss and contrast the design
+principles.
+
 ### Option A: Well-Known Symbol Protocol
 
 A new `Symbol.cancelation` is introduced. An object is "cancelable" if it has a
