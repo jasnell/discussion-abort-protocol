@@ -1,8 +1,8 @@
-# Proposal: Abort Protocol Discussion
+# Discussion: Abort Protocol Discussion
 
 ## Status
 
-No Status
+No Status - This is a discussion, not a proposal
 
 ## Champions
 
@@ -21,7 +21,7 @@ JavaScript environments are required to implement them. This creates a gap: the
 language has no built-in concept of cancellation, even though the entire ecosystem
 depends on one.
 
-This proposal defines an **abort protocol** — a minimal set of requirements that any
+This document defines an **abort protocol** — a minimal set of requirements that any
 object can satisfy to participate in cooperative cancellation. The protocol is designed
 so that `AbortSignal` already satisfies it, requiring no changes to the Web platform.
 
