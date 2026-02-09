@@ -412,10 +412,10 @@ The subscribe-returns-unsubscribe pattern has significant advantages for this pr
 
 ### Observables as a Subscription Mechanism?
 
-The TC39 Observable proposal (Stage 1) provides a standardized subscription model
-with built-in teardown semantics. In principle, a signal could expose an Observable
-that emits once (the abort reason) and then completes, with subscription teardown
-serving as the unsubscribe mechanism:
+The dormant TC39 Observable proposal (Stage 1, now largely replaced by the WICG
+effort) would provide a standardized subscription model with built-in teardown semantics.
+In principle, a signal could expose an Observable that emits once (the abort reason)
+and then completes, with subscription teardown serving as the unsubscribe mechanism:
 
 ```js
 const subscription = signal.aborted$.subscribe({
@@ -450,6 +450,11 @@ build upon, not the other way around.
 The subscribe-returns-unsubscribe pattern described above is *compatible* with
 Observable — an Observable adapter could be layered on top without the protocol
 itself depending on it.
+
+The other obvious key issue is that the Observable proposal in TC-39 is effectively
+dead and has been replaced by the WICG proposal, which cannot be normatively
+referenced in TC-39 (it's a Web platform API so has same dependency constraints
+as `AbortSignal`).
 
 ### Protocol Identification
 
@@ -944,7 +949,7 @@ the subscription mechanism difference).
   resources (e.g., detaches listeners) but must not trigger abort (Principle 12).
   The unsubscribe handle returned by the subscription mechanism is a natural
   candidate for `Symbol.dispose` integration.
-- **Observable** (Stage 1): Observables have built-in cancellation semantics via
+- **Observable** (Stage 1, Dormant): Observables have built-in cancellation semantics via
   subscription teardown. An abort protocol should be compatible — an Observable
   subscription could accept a signal, and the subscription's teardown could serve
   as an unsubscribe mechanism.
