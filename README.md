@@ -505,13 +505,14 @@ the largest surface area, and harder to retrofit onto `AbortSignal`.
 
 ## Design Examples
 
-The following examples illustrate how each protocol option would look in practice
+The following examples illustrate how each protocol option could look in practice
 across the key use cases: basic consumption, the `AbortSignal` compatibility bridge,
 the never-aborts sentinel, and signal composition.
 
 Note: These are **NOT** intended to be concrete proposals. These are meant not to
 propose a solution but to give a starting point to discuss and contrast the design
-principles.
+principles. Take each with a grain of salt. I tend to think best in terms of concrete
+examples to help ground my thoughts, so this is all just pure brainstorming.
 
 ### Option A: Well-Known Symbol Protocol
 
