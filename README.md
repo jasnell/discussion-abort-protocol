@@ -386,6 +386,12 @@ No need for function reference identity — the returned handle is the unsubscri
 token. This pattern exists in ECMAScript today (no Web API dependency) and is used
 by numerous libraries (RxJS, MobX, Redux, Solid, Svelte, etc.).
 
+### Current WHATWG Proposal
+
+There is a current [WHATWG](https://github.com/whatwg/dom/pull/1425) proposal
+that has been recently opened that suggests adding an `addAbortCallback(...)`
+API to `AbortSignal` that would exist in addition to `addEventListener('abort', ...)`
+
 ### Subscribe-Returns-Unsubscribe
 
 The subscribe-returns-unsubscribe pattern has significant advantages for this protocol:
