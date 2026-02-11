@@ -297,11 +297,6 @@ Automatically firing late listeners would be harmful:
   to handle both the "already aborted" and "aborted later" cases, which leads to
   fragile code that behaves differently depending on timing.
 
-This differs from `AbortSignal`'s behavior, where `addEventListener('abort', fn)` on
-an already-aborted signal fires `fn` synchronously. That behavior is a convenience at
-the cost of correctness — it masks missing pre-checks and makes the subscription
-call do double duty.
-
 ## Required Capabilities
 
 | Capability                 | Mechanism                           | When Used                    |
