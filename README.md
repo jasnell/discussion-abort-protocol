@@ -21,9 +21,8 @@ JavaScript environments are required to implement them. This creates a gap: the
 language has no built-in concept of cancellation, even though the entire ecosystem
 depends on one.
 
-This document defines an **abort protocol** — a minimal set of requirements that any
-object can satisfy to participate in cooperative cancellation. The protocol is designed
-so that `AbortSignal` already satisfies it, requiring no changes to the Web platform.
+This document discusses the design principles for an **abort protocol** — a minimal set
+of requirements that any object can satisfy to participate in cooperative cancellation.
 
 ## Design Principles
 
@@ -282,6 +281,13 @@ Automatically firing late listeners would be harmful:
 - The consumer is not obligated to interrupt any in-progress work when the signal is triggered.
 - The signal might arrive too late to actually cancel the work or the operation may not be
   interruptible.
+
+### Principle 14: Existing solutions should fit retroactively
+
+Specifically, it should be possible for the existing `AbortSignal` to retroactively be fitted
+to a language-level abort protocol without requiring downstream code changes. `AbortSignal`
+itself may need to change (e.g. by adding new properties or methods, etc) but applications
+currently using `AbortSignal` should not require any changes.
 
 ## Required Capabilities
 
