@@ -343,6 +343,34 @@ satisfy it** — ideally with no changes, or at most with the addition of a well
 Symbol method. The Web platform should be able to layer its richer API on top of the
 protocol without conflict.
 
+## Relationship to Existing Work
+
+### AbortController / AbortSignal (WHATWG DOM)
+
+The Web API that the ecosystem has converged on. The protocol should be designed so
+that `AbortSignal` can retroactively satisfy it. The most natural path: WHATWG adds
+a `Symbol.abort` method to `AbortSignal.prototype` that returns a protocol-conforming
+view (or `AbortSignal` itself, if it already conforms — which it mostly does, minus
+the subscription mechanism difference).
+
+### TC39 Proposals
+
+- **Explicit Resource Management** (`using` / `Symbol.dispose`): Disposal and
+  cancellation are related but distinct concerns. Disposing a controller cleans up
+  resources (e.g., detaches listeners) but must not trigger abort (Principle 12).
+  The unsubscribe handle returned by the subscription mechanism is a natural
+  candidate for `Symbol.dispose` integration.
+- **Observable** (Stage 1, Dormant): Observables have built-in cancellation semantics via
+  subscription teardown. An abort protocol should be compatible — an Observable
+  subscription could accept a signal, and the subscription's teardown could serve
+  as an unsubscribe mechanism.
+- **Error.cause** (ES2022): The `reason` carried by an abort signal is typically
+  propagated as an error cause.
+- **Error.isError** (Stage 2): Cross-realm abort signal identification may face
+  similar challenges to cross-realm error identification.
+- **Concurrency Control** (Stage 1): The Concurrency Control proposal would likely
+  be [dependent on a abort protocol](https://github.com/tc39/proposal-concurrency-control/issues/14) mechanism.
+
 ---
 
 **NOTE: Much of the following is just design brainstorming around the problem
@@ -950,30 +978,3 @@ const neverAborts = Object.freeze({
   wants to be robust must still verify the properties exist, regardless of whether
   the Symbol is present.
 
-## Relationship to Existing Work
-
-### AbortController / AbortSignal (WHATWG DOM)
-
-The Web API that the ecosystem has converged on. The protocol should be designed so
-that `AbortSignal` can retroactively satisfy it. The most natural path: WHATWG adds
-a `Symbol.abort` method to `AbortSignal.prototype` that returns a protocol-conforming
-view (or `AbortSignal` itself, if it already conforms — which it mostly does, minus
-the subscription mechanism difference).
-
-### TC39 Proposals
-
-- **Explicit Resource Management** (`using` / `Symbol.dispose`): Disposal and
-  cancellation are related but distinct concerns. Disposing a controller cleans up
-  resources (e.g., detaches listeners) but must not trigger abort (Principle 12).
-  The unsubscribe handle returned by the subscription mechanism is a natural
-  candidate for `Symbol.dispose` integration.
-- **Observable** (Stage 1, Dormant): Observables have built-in cancellation semantics via
-  subscription teardown. An abort protocol should be compatible — an Observable
-  subscription could accept a signal, and the subscription's teardown could serve
-  as an unsubscribe mechanism.
-- **Error.cause** (ES2022): The `reason` carried by an abort signal is typically
-  propagated as an error cause.
-- **Error.isError** (Stage 2): Cross-realm abort signal identification may face
-  similar challenges to cross-realm error identification.
-- **Concurrency Control** (Stage 1): The Concurrency Control proposal would likely
-  be [dependent on a abort protocol](https://github.com/tc39/proposal-concurrency-control/issues/14) mechanism.
