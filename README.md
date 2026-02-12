@@ -297,6 +297,13 @@ Automatically firing late listeners would be harmful:
   to handle both the "already aborted" and "aborted later" cases, which leads to
   fragile code that behaves differently depending on timing.
 
+### Principle 14: Cancellation is best-effort
+
+- Triggering an abort signal is not guaranteed to prevent any further work from occurring.
+- The consumer is not obligated to interrupt any in-progress work when the signal is triggered.
+- The signal might arrive too late to actually cancel the work or the operation may not be
+  interruptible.
+
 ## Required Capabilities
 
 | Capability                 | Mechanism                           | When Used                    |
