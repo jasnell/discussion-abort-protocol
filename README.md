@@ -343,7 +343,16 @@ satisfy it** — ideally with no changes, or at most with the addition of a well
 Symbol method. The Web platform should be able to layer its richer API on top of the
 protocol without conflict.
 
-### What the Protocol Must Express
+---
+
+**NOTE: Much of the following is just design brainstorming around the problem
+space... it may resemble concrete proposals (and in one case, there is a link
+to a concrete proposal over in WHATWG) but it's mostly brainstorming to help
+ground the discussion a bit. - Signed, A Firm Believer In Cunningham's Law**
+
+---
+
+## What the Protocol Must Express
 
 From the principles, the protocol needs to surface exactly four things:
 
