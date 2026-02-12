@@ -371,5 +371,7 @@ the subscription mechanism difference).
 - **Concurrency Control** (Stage 1): The Concurrency Control proposal would likely
   be [dependent on a abort protocol](https://github.com/tc39/proposal-concurrency-control/issues/14) mechanism.
 
+## Brainstorming the design space
 
-
+For those interested in just brainstorming / exploring the design space, have a look
+at [BRAINSTORM_DESIGN_SPACE.md](BRAINSTORM_DESIGN_SPACE.md)
