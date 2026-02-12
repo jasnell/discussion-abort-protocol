@@ -395,7 +395,7 @@ by numerous libraries (RxJS, MobX, Redux, Solid, Svelte, etc.).
 
 ### Current WHATWG Proposal
 
-There is a current [WHATWG](https://github.com/whatwg/dom/pull/1425) proposal
+There is a current WHATWG proposal ([https://github.com/whatwg/dom/pull/1425](https://github.com/whatwg/dom/pull/1425))
 that has been recently opened that suggests adding an `addAbortCallback(...)`
 API to `AbortSignal` that would exist in addition to `addEventListener('abort', ...)`
 
@@ -966,3 +966,5 @@ the subscription mechanism difference).
   propagated as an error cause.
 - **Error.isError** (Stage 2): Cross-realm abort signal identification may face
   similar challenges to cross-realm error identification.
+- **Concurrency Control** (Stage 1): The Concurrency Control proposal would likely
+  be [dependent on a abort protocol](https://github.com/tc39/proposal-concurrency-control/issues/14) mechanism.
