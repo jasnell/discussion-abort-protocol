@@ -524,8 +524,8 @@ examples to help ground my thoughts, so this is all just pure brainstorming.
 
 ### Option A: Well-Known Symbol Protocol
 
-A new `Symbol.cancelation` is introduced. An object is "cancelable" if it has a
-`[Symbol.cancelation]()` method that returns a protocol object with `aborted`,
+A new `Symbol.abort` is introduced. An object is "cancelable" if it has a
+`[Symbol.abort]()` method that returns a protocol object with `aborted`,
 `reason`, and `subscribe`.
 
 #### Basic Consumer
@@ -533,7 +533,7 @@ A new `Symbol.cancelation` is introduced. An object is "cancelable" if it has a
 ```js
 async function doWork(signal) {
   // Obtain the protocol object
-  const cancel = signal[Symbol.cancelation]();
+  const cancel = signal[Symbol.abort]();
 
   // Pre-check (Principle 3)
   if (cancel.aborted) throw cancel.reason;
@@ -561,14 +561,14 @@ async function doWork(signal) {
 #### AbortSignal Compatibility
 
 `AbortSignal` already has `.aborted` and `.reason`. However, because the protocol
-object returned by `[Symbol.cancelation]()` is a separate object, these must be
+object returned by `[Symbol.abort]()` is a separate object, these must be
 proxied through as getters. The subscription must also be bridged from
 `EventTarget` to the subscribe-returns-unsubscribe pattern.
 
 WHATWG would add one method to `AbortSignal.prototype`:
 
 ```js
-AbortSignal.prototype[Symbol.cancelation] = function () {
+AbortSignal.prototype[Symbol.abort] = function () {
   const signal = this;
   return {
     get aborted() { return signal.aborted; },
@@ -581,7 +581,7 @@ AbortSignal.prototype[Symbol.cancelation] = function () {
 };
 ```
 
-Note that each call to `[Symbol.cancelation]()` allocates a new wrapper object.
+Note that each call to `[Symbol.abort]()` allocates a new wrapper object.
 This is consistent with how `Symbol.iterator` works (each call returns a fresh
 iterator), but for a protocol object that is typically obtained once and held for
 the duration of the work, the allocation cost is minimal.
@@ -590,7 +590,7 @@ the duration of the work, the allocation cost is minimal.
 
 ```js
 const neverAborts = {
-  [Symbol.cancelation]() {
+  [Symbol.abort]() {
     return {
       aborted: false,
       reason: undefined,
@@ -608,7 +608,7 @@ await doWork(neverAborts);
 ```js
 function any(signals) {
   // Obtain protocol objects for all inputs
-  const cancels = signals.map(s => s[Symbol.cancelation]());
+  const cancels = signals.map(s => s[Symbol.abort]());
 
   // Check if any input is already aborted (Principle 3)
   for (const cancel of cancels) {
@@ -633,7 +633,7 @@ function any(signals) {
         subscribers = subscribers.filter(f => f !== fn);
       };
     },
-    [Symbol.cancelation]() { return this; }
+    [Symbol.abort]() { return this; }
   };
 
   // Subscribe to all inputs
@@ -659,7 +659,7 @@ function any(signals) {
 
 #### Observations on Option A
 
-- **Two-step access.** Consumers call `[Symbol.cancelation]()` before interacting
+- **Two-step access.** Consumers call `[Symbol.abort]()` before interacting
   with the signal. This parallels `[Symbol.iterator]()`. Unlike iterators, where
   the distinction between "iterable" and "iterator" is meaningful (an iterable can
   produce multiple independent iterators), a cancel signal has singular state —
@@ -731,7 +731,7 @@ const neverAborts = Object.freeze({
 
 #### Observations on Option B
 
-- **Direct access.** No `[Symbol.cancelation]()` call. Consumers interact directly
+- **Direct access.** No `[Symbol.abort]()` call. Consumers interact directly
   with the signal's properties and methods.
 - **`AbortSignal` retrofit.** One method addition (`.subscribe`). The existing
   `.aborted` and `.reason` properties already conform. No wrapper objects.
@@ -805,7 +805,7 @@ coordination between TC39 and WHATWG, and would be a breaking change if
 Symbol, essentially falling back to Option A or D for interop:
 
 ```js
-AbortSignal.prototype[Symbol.cancelation] = function () {
+AbortSignal.prototype[Symbol.abort] = function () {
   return this;
 };
 AbortSignal.prototype.subscribe = function (fn) {
@@ -853,7 +853,7 @@ const signal = CancelSignal.never();
 
 ### Option D: Symbol Protocol With Direct Conformance
 
-A hybrid of Options A and B. A `Symbol.cancelation` is used for identification, but
+A hybrid of Options A and B. A `Symbol.abort` is used for identification, but
 the protocol properties (`aborted`, `reason`, `subscribe`) live directly on the
 object — the Symbol method simply returns `this`.
 
@@ -879,14 +879,14 @@ async function doWork(signal) {
 }
 ```
 
-In practice, consumers never call `[Symbol.cancelation]()` — they use the properties
+In practice, consumers never call `[Symbol.abort]()` — they use the properties
 directly. The Symbol serves only as a **type brand** for identification:
 
 ```js
 // A library that accepts an optional signal:
 function startWork(options) {
   const signal = options?.signal;
-  if (signal && !signal[Symbol.cancelation]) {
+  if (signal && !signal[Symbol.abort]) {
     throw new TypeError('signal does not satisfy the cancelation protocol');
   }
   // ... use signal.aborted, signal.subscribe, etc. directly
@@ -899,7 +899,7 @@ function startWork(options) {
 the Symbol brand and the `.subscribe` method:
 
 ```js
-AbortSignal.prototype[Symbol.cancelation] = function () { return this; };
+AbortSignal.prototype[Symbol.abort] = function () { return this; };
 AbortSignal.prototype.subscribe = function (fn) {
   this.addEventListener('abort', fn, { once: true });
   return () => this.removeEventListener('abort', fn);
@@ -907,7 +907,7 @@ AbortSignal.prototype.subscribe = function (fn) {
 ```
 
 This is nearly as light as Option B (one extra line for the Symbol brand), with the
-added benefit of reliable identification. Since `[Symbol.cancelation]()` returns
+added benefit of reliable identification. Since `[Symbol.abort]()` returns
 `this`, there is no wrapper allocation — `AbortSignal` instances *are* the protocol
 objects.
 
@@ -918,7 +918,7 @@ const neverAborts = Object.freeze({
   aborted: false,
   reason: undefined,
   subscribe(_fn) { return () => {}; },
-  [Symbol.cancelation]() { return this; }
+  [Symbol.abort]() { return this; }
 });
 ```
 
@@ -928,7 +928,7 @@ const neverAborts = Object.freeze({
   properties directly. The Symbol is present for identification but not required for
   access.
 - **The Symbol is a brand, not a factory.** Unlike `Symbol.iterator` (which returns
-  a new iterator each time), `[Symbol.cancelation]()` always returns `this`. A
+  a new iterator each time), `[Symbol.abort]()` always returns `this`. A
   cancel signal has singular state — there is no analogous reason to produce
   independent protocol objects from the same source.
 - **`AbortSignal` retrofit.** Adds two things: the Symbol and `.subscribe`.
@@ -937,7 +937,7 @@ const neverAborts = Object.freeze({
   consumer accesses `.aborted`, `.reason`, and `.subscribe` as named properties on
   the same object. The Symbol's presence does not guarantee the existence or
   correctness of those properties. A buggy implementation could have
-  `[Symbol.cancelation]` but missing or incorrect properties. Consumer code that
+  `[Symbol.abort]` but missing or incorrect properties. Consumer code that
   wants to be robust must still verify the properties exist, regardless of whether
   the Symbol is present.
 
