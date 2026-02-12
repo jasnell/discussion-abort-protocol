@@ -251,28 +251,7 @@ constructible. Whether the language provides a built-in sentinel (analogous to
 `AbortSignal.abort()` for the already-aborted case) is a separate question, but the
 protocol must not preclude it.
 
-### Principle 12: Abort Is Always Explicit, Never Implicit
-
-Triggering an abort must be a **deliberate, explicit act**. An abort signal must never
-fire as a side effect of some other operation. In particular:
-
-- **Disposal must not trigger abort.** If an abort controller is used with `using` /
-  `Symbol.dispose`, disposing the controller means "I am done managing this controller's
-  lifetime" — it does **not** mean "cancel all work associated with this signal."
-  These are fundamentally different intents. A consumer that lets a controller fall out
-  of scope or be disposed is relinquishing management, not issuing a cancellation order.
-- **Garbage collection must not trigger abort.** A signal becoming unreachable is not
-  an abort. Work may continue indefinitely without a live reference to its signal.
-- **Unsubscription must not trigger abort.** A consumer removing its own listener is
-  saying "I no longer care" about its own notification — not requesting that other
-  consumers be interrupted.
-
-Abort has consequences: it interrupts work, may cause side effects to be rolled back,
-and propagates a reason that typically becomes an exception. An action with these
-consequences must never happen as a surprise. The only way to abort is to explicitly
-call the abort mechanism on the controller side.
-
-### Principle 13: Late Listeners Are Ignored
+### Principle 12: Late Listeners Are Ignored
 
 If a listener is registered on a signal that has **already aborted**, the registration
 is silently ignored. The listener is not called, not retained, and no error is thrown.
@@ -297,7 +276,7 @@ Automatically firing late listeners would be harmful:
   to handle both the "already aborted" and "aborted later" cases, which leads to
   fragile code that behaves differently depending on timing.
 
-### Principle 14: Cancellation is best-effort
+### Principle 13: Cancellation is best-effort
 
 - Triggering an abort signal is not guaranteed to prevent any further work from occurring.
 - The consumer is not obligated to interrupt any in-progress work when the signal is triggered.
