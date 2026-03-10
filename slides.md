@@ -66,6 +66,29 @@ But these are **WHATWG DOM APIs**, not ECMAScript.
 minimal or no changes to the Web platform.)
 
 ---
+
+# Prior Art: tc39/proposal-cancellation
+
+**Stage 1** since September 2017 — dormant for 7+ years
+
+- Originally proposed concrete `CancellationToken` / `CancellationTokenSource` classes
+- Champions: Ron Buckton, Brian Terlson, Domenic Denicola, Yehuda Katz
+- Stalled before reaching Stage 2
+
+---
+
+# Prior Art: Issue #22
+
+In 2019, Ron Buckton proposed pivoting to a **protocol-based approach**:
+
+- `Symbol.cancelSignal` method returning a signal object
+- `signaled` property for synchronous state check
+- `subscribe()` / `unsubscribe()` pattern
+- Detailed WHATWG interop plan for `AbortSignal`
+
+This discussion picks up where that proposal left off.
+
+---
 layout: section
 ---
 
@@ -262,6 +285,18 @@ Triggering an abort signal is **not guaranteed** to prevent further work.
 - `AbortSignal` itself may need changes (new properties or methods)
 - Applications currently using `AbortSignal` should require **no changes**
 - The protocol must be designed with this constraint in mind
+
+---
+
+# Open Questions
+
+Feedback so far has raised:
+
+- **Scope** — Should this be a more general "synchronous signal" primitive, not abort-specific? (#8)
+
+- **Ergonomics** — Handler cleanup is routinely forgotten in practice. Is the abstraction too low-level? (#7)
+
+- **Prior art** — How does this relate to the previous TC39 cancellation proposal? (#5)
 
 ---
 layout: center
